@@ -18,9 +18,9 @@ k = kmax * (1-t./T) .* exp(1i*2*pi*N*(1-t./T)); % first (1-t./T) indicates spira
 g = -interp1(t, [0;diff(k)'], t+dt/2, 'spline' ,0) / gamma / dt; % G/cm
 
 subplot(2,3,1);
-plot(k);
-subplot(2,3,2);
-plot(t, real(g), t, imag(g));
+plot(k); xlabel('Kx'); ylabel('Ky');
+subplot(2,3,2); 
+plot(t, real(g), t, imag(g)); ylabel('Gradient, G/cm')
 
 %% build system matrix (2x-oversampled)
 xx = -fov/2 : res/2 : fov/2-res/2;
@@ -30,22 +30,22 @@ zz = 0;
 A    = dt*2*pi*gamma*exp( 1i*2*pi*( x(:)*real(k(:)') + y(:)*imag(k(:)') ) );
 
 % build desired pattern
-mdes = 2*x.^2 + y.^2 < 5^2;
+mdes = (2*x.^2 + y.^2 < 5^2);
 mdes = IFFT2D( (hamming(size(x,1))*hamming(size(x,1))').^2 .* FFT2D(mdes) );
 subplot(2,3,4);
-imagesc(abs(mdes)); caxis([-1 1]);
+imagesc(abs(mdes)); caxis([-1 1]); title('Desired Pattern');
 
 % design RF
 lambda = 1;
 b1 = (A'*A + lambda*eye(length(k))) \ (A'*mdes(:)); % = inv(A'*A + lambda*eye(length(k))) * (A'*mdes(:));
 
 subplot(2,3,3);
-plot(t, real(b1), t, imag(b1)); hold on;
+plot(t, real(b1), t, imag(b1)); ylabel('RF, (G)')
 
 % forward projection
 nm = reshape (A*b1, size(x));
 subplot(2,3,5);
-imagesc(abs(nm)); caxis([-1 1]);
+imagesc(abs(nm)); caxis([-1 1]); title('Estimated Pattern');
 
 %% Simulate it
 gr = [real(g(:)), imag(g(:)), zeros(size(g(:)))];
@@ -58,4 +58,4 @@ mcb = mxcc+1i*mycc;
 mcb = reshape(mcb, size(x));
 
 subplot(2,3,6);
-imagesc(abs(mcb)); caxis([-1 1]);
+imagesc(abs(mcb)); caxis([-1 1]); title('Bloch Simulation');
