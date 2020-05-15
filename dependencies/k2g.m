@@ -40,7 +40,7 @@ gamma = 4257;  % Hz/G
 if calc_mode == 0
     gradients = -diff( vertcat(zeros(1,sz(2)), kspace) ) / gamma / dt; % also add zero at the beginning to get same length as kspace after diff
 elseif calc_mode == 1
-    t = 0:dt:(sz(1)-1)*dt; % sz(1) == number of k-space sample points
+    t = transpose(0:dt:(sz(1)-1)*dt); % sz(1) == number of k-space sample points
     g = -diff(kspace) / gamma / dt; % G/cm
     gradients = interp1(t, vertcat(zeros(1,sz(2)), g), t+dt/2, 'linear' ,0); % resample g to get same length as kspace 
 else
