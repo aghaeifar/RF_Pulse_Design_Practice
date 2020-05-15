@@ -1,6 +1,6 @@
 %%
 % 2D Excitation with Spiral trajectory 
-% Ali Aghaeifar <ali.aghaeifar.mri@gmail.com>
+% Written by Ali Aghaeifar, 2020, <ali.aghaeifar.mri[at]gmail.com>>
 %
 %% Timing & Resolution
 T   = 2.5e-3;   % Sec, dur of pulse
@@ -10,12 +10,12 @@ t   = 0:dt:T-dt;% time points
 fov   = 20;     % cm
 res   = 1;      % cm, resolution
 kmax  = 1/2/res;% cycles/m, max spatial frequency
-N     = ceil(kmax*fov); % number of turns -> kmax / 1 / fov where 1/fov is k-space resolution
+N     = ceil(kmax*fov); % number of spiral turns -> kmax / 1 / fov where 1/fov is k-space resolution
 gamma = 4257;   % Hz/G
 
 % constant angular rate spiral-in:
 k = kmax * (1-t./T) .* exp(1i*2*pi*N*(1-t./T)); % first (1-t./T) indicates spiral-in, second (1-t./T) indicates clock-wise rotation
-g = -interp1(t, [0;diff(k)'], t+dt/2, 'spline' ,0) / gamma / dt; % G/cm
+g = k2g(k, dt); % kspace to gradient conversion
 
 subplot(2,3,1);
 plot(k); xlabel('Kx'); ylabel('Ky');
